@@ -1,51 +1,25 @@
 # Reproduce the scenario
 
-This repo intends to demonstrate that Garden deploys with --var option works as expected.
+This repo intends to demonstrate that Garden deploys with --var option doesn't work to replace the environments[].defaultNamespace field;
 
 ````bash
-garden deploy --var installCRDs=true
+garden deploy --var installCRDs=true --var name=shankyjs
 ````
 
 Result of the above command:
 
 ````bash
-➜  cli-env-vars git:(master) ✗ garden deploy --var installCRDs=true
+➜  cli-env-vars git:(master) ✗ garden deploy --var installCRDs=true --var name=shankyjs
 Deploy 🚀
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌍  Running in namespace default in environment local
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✔ providers                 → Getting status... → Cached
-   ℹ Run with --force-refresh to force a refresh of provider statuses.
-✔ graph                     → Resolving 1 modules... → Done
-✔ kong                      → Building version v-a86a0e745b... → Done (took 0 sec)
-✔ kong                      → Deploying version v-e41fcb9f43... → Done (took 5.6 sec)
-   ℹ kong                      → Resources ready
-
-Done! ✔️
+Invalid template string (user-${var.name}): Could not find key name under var.
 ````
 
-## If you don't send the env var
+## Expected result
 
-````bash
-➜  cli-env-vars git:(master) ✗ garden deploy
-Deploy 🚀
+- Garden should be able to replace the defaultNamespace field by providing env vars from the `--var` global option.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌍  Running in namespace default in environment local
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## Reproduce the issue
 
-✔ providers                 → Getting status... → Cached
-   ℹ Run with --force-refresh to force a refresh of provider statuses.
-  graph                     → Resolving 1 modules...
-Failed resolving one or more modules:
-
-kong: Invalid template string (${var.installCRDs}): Could not find key installCRDs under var.
-
-See .garden/error.log for detailed error message
-````
-
-## Conclusion
-
-The command `garden deploy --var KEY=VALUE` works as expected.
+Try to run this configuration with the command `garden deploy  --var installCRDs=true --var name=shankyjs`
